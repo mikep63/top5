@@ -1,0 +1,1473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Top 5 Trivia</title>
+<meta name="description" content="Name the top five. Order doesn't matter. Three strikes and you're out.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Public+Sans:wght@400;600;800&display=swap">
+<style>
+/* Layout: one narrow column; a game-show answer board is the centerpiece. */
+:root {
+  --bg: #e9edf3;
+  --surface: #ffffff;
+  --ink: #142038;
+  --muted: #586378;
+  --line: #cfd6e2;
+  --board: #1b2f5c;
+  --board-deep: #12224a;
+  --board-ink: #fbf3dc;
+  --marquee: #e6a21a;
+  --good: #23855a;
+  --bad: #c2392b;
+  --good-soft: #dff3e8;
+  --bad-soft: #fbe3e0;
+  --font-display: "Alfa Slab One", Rockwell, "Roboto Slab", Georgia, serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c1424;
+    --surface: #141f36;
+    --ink: #e7ecf5;
+    --muted: #96a2ba;
+    --line: #26344f;
+    --board: #203a72;
+    --board-deep: #172b57;
+    --board-ink: #fbf3dc;
+    --marquee: #f0b437;
+    --good: #4cc38a;
+    --bad: #ef6b5c;
+    --good-soft: #143a2a;
+    --bad-soft: #42201e;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 var(--font-body);
+  padding: env(safe-area-inset-top, 0px) 16px env(safe-area-inset-bottom, 0px);
+}
+.wrap { max-width: 560px; margin: 0 auto; padding-block: 24px 48px; display: grid; gap: 20px; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--marquee); outline-offset: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+
+/* Header */
+.masthead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.wordmark { font-family: var(--font-display); font-weight: 400; font-size: 2.4rem; line-height: 1; letter-spacing: .01em; }
+.wordmark span { color: var(--marquee); }
+.tag { font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+/* Menu */
+.rules { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+.rules h2 { font-size: 1rem; margin-bottom: 8px; }
+.rules ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; }
+.rules b { font-variant-numeric: tabular-nums; }
+.level h3 { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.level-list { display: grid; gap: 8px; }
+.pick {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; text-align: left; padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+}
+.pick:hover { border-color: var(--marquee); }
+.pick-title { font-weight: 600; min-width: 0; }
+.chip { flex: none; font-size: .8rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip.played { background: var(--board); border-color: var(--board); color: var(--board-ink); }
+.reset { justify-self: start; background: none; border: none; padding: 0; color: var(--muted); text-decoration: underline; font-size: .85rem; }
+
+/* Game */
+.back { justify-self: start; background: none; border: none; padding: 0; color: var(--muted); font-weight: 600; }
+.q-head { display: grid; gap: 6px; }
+.q-level { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.q-prompt { font-size: 1.45rem; line-height: 1.25; font-weight: 800; }
+.q-rule { color: var(--muted); font-size: .92rem; margin: 0; }
+.q-source { color: var(--muted); font-size: .8rem; margin: 0; }
+
+.status { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.score { display: flex; align-items: baseline; gap: 8px; }
+.score-num { font-family: var(--font-display); font-size: 2.2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.score-label { font-size: .8rem; color: var(--muted); font-weight: 600; }
+.strikes { display: flex; gap: 6px; }
+.strike {
+  width: 34px; height: 34px; border-radius: 6px; display: grid; place-items: center;
+  border: 2px solid var(--line); color: transparent; font-weight: 800; font-size: 1.1rem;
+}
+.strike.on { border-color: var(--bad); background: var(--bad); color: #fff; }
+
+.board { background: var(--board-deep); border-radius: 14px; padding: 10px; display: grid; gap: 8px; }
+.tile { display: grid; grid-template-columns: 52px 1fr; min-height: 56px; perspective: 600px; }
+.tile-rank {
+  display: grid; place-items: center; background: var(--marquee); color: var(--board-deep);
+  font-family: var(--font-display); font-size: 1.3rem; border-radius: 8px 0 0 8px;
+}
+.tile-face {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 14px;
+  background: var(--board); color: var(--board-ink); border-radius: 0 8px 8px 0; min-width: 0;
+}
+.tile-face .name { font-weight: 800; font-size: 1.05rem; min-width: 0; overflow-wrap: anywhere; }
+.tile-face .val { font-size: .85rem; opacity: .85; font-variant-numeric: tabular-nums; text-align: right; }
+.tile.hidden .tile-face { background: repeating-linear-gradient(135deg, var(--board) 0 10px, var(--board-deep) 10px 20px); }
+.tile.revealed .tile-face { animation: flip .45s ease-out; }
+.tile.missed .tile-face { background: var(--board-deep); color: var(--board-ink); opacity: .7; }
+.tile.missed .name::after { content: " (missed)"; font-weight: 400; font-size: .8rem; }
+@keyframes flip { from { transform: rotateX(90deg); } to { transform: rotateX(0); } }
+
+.entry { display: grid; gap: 10px; }
+.entry-row { display: flex; gap: 8px; }
+.entry-row input {
+  flex: 1; min-width: 0; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--line);
+  background: var(--surface); font-size: 1.05rem;
+}
+.entry-row input:focus { border-color: var(--marquee); outline: none; }
+.btn {
+  padding: 12px 18px; border-radius: 10px; border: 2px solid var(--board); background: var(--board);
+  color: var(--board-ink); font-weight: 800;
+}
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.small { padding: 6px 12px; font-size: .9rem; border-width: 1px; }
+.suggest { display: flex; flex-wrap: wrap; gap: 6px; min-height: 0; }
+.suggest button {
+  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: .9rem;
+}
+.suggest button:hover { border-color: var(--marquee); }
+
+.feedback { border-radius: 10px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--line); display: grid; gap: 8px; }
+.feedback.good { background: var(--good-soft); border-color: var(--good); }
+.feedback.bad { background: var(--bad-soft); border-color: var(--bad); }
+.feedback p { margin: 0; }
+.feedback .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.misses { display: grid; gap: 4px; }
+.misses h4 { margin: 0; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.misses ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.misses li { font-size: .85rem; padding: 2px 10px; border-radius: 999px; background: var(--bad-soft); border: 1px solid var(--bad); }
+
+.stop-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.stop-row p { margin: 0; flex-basis: 100%; }
+
+.result { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: grid; gap: 12px; }
+.result h3 { font-size: 1.1rem; }
+.breakdown { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; font-variant-numeric: tabular-nums; }
+.breakdown dt { color: var(--muted); }
+.breakdown dd { margin: 0; text-align: right; font-weight: 600; }
+.breakdown .total { color: var(--ink); font-weight: 800; border-top: 1px solid var(--line); padding-top: 4px; }
+.near h4 { margin: 0 0 4px; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.near ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; font-size: .92rem; }
+.near li { display: flex; justify-content: space-between; gap: 12px; }
+.near .r { color: var(--muted); font-variant-numeric: tabular-nums; flex: none; }
+.share pre {
+  margin: 0; padding: 10px 12px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line);
+  font: .95rem/1.4 ui-monospace, "SF Mono", Menlo, monospace; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.share { display: grid; gap: 8px; }
+.end-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+[hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile.revealed .tile-face { animation: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="wordmark">Top <span>5</span></div>
+    <div class="tag">Playtest build</div>
+  </header>
+
+  <main id="menu" class="wrap" style="padding:0">
+    <section class="rules" aria-labelledby="rules-h">
+      <h2 id="rules-h">How to play</h2>
+      <ul id="rules-list"></ul>
+    </section>
+    <div id="levels" class="wrap" style="padding:0;gap:18px"></div>
+    <button class="reset" id="reset" type="button">Clear my scores on this device</button>
+    <p class="q-source" id="reset-msg" hidden></p>
+  </main>
+
+  <main id="game" class="wrap" style="padding:0" hidden>
+    <button class="back" id="back" type="button">&larr; All puzzles</button>
+    <div class="q-head">
+      <div class="q-level" id="q-level"></div>
+      <h2 class="q-prompt" id="q-prompt"></h2>
+      <p class="q-rule" id="q-rule"></p>
+      <p class="q-source" id="q-source"></p>
+    </div>
+
+    <div class="status">
+      <div class="score"><span class="score-num" id="score">0</span><span class="score-label">points</span></div>
+      <div class="strikes" id="strikes" aria-label="Strikes"></div>
+    </div>
+
+    <div class="board" id="board"></div>
+
+    <div class="entry" id="entry">
+      <form class="entry-row" id="guess-form" autocomplete="off">
+        <label for="guess" class="sr">Your guess</label>
+        <input id="guess" type="text" placeholder="Type an answer" autocapitalize="words" spellcheck="false" enterkeyhint="go">
+        <button class="btn" type="submit">Guess</button>
+      </form>
+      <div class="suggest" id="suggest" aria-label="Suggestions"></div>
+    </div>
+
+    <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+
+    <div class="misses" id="misses" hidden>
+      <h4>Misses</h4>
+      <ul id="miss-list"></ul>
+    </div>
+
+    <div class="stop-row" id="stop-row">
+      <button class="btn ghost small" id="stop" type="button">I'm done</button>
+    </div>
+
+    <section class="result" id="result" hidden aria-live="polite">
+      <h3 id="result-h"></h3>
+      <dl class="breakdown" id="breakdown"></dl>
+      <div class="near" id="near"></div>
+      <div class="share">
+        <pre id="share-text"></pre>
+        <div class="end-actions">
+          <button class="btn small" id="copy" type="button">Copy result</button>
+          <button class="btn ghost small" id="next" type="button">Next puzzle</button>
+        </div>
+        <p class="q-source" id="copy-msg" hidden></p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+// ===== Game data and rules (no DOM access in this block) =====
+
+// Tune these from playtest results.
+const RULES = { pointsPerFind: 5, strikeCost: 3, maxStrikes: 3, sweepBonus: 5 };
+
+// Pool lines: "id|Display name|alias;alias". A leading "!" marks an entry that is
+// out of scope for the question: guessing it shows a note and costs no strike.
+const POOLS = {
+  countries: `
+afghanistan|Afghanistan
+albania|Albania
+algeria|Algeria
+andorra|Andorra
+angola|Angola
+antigua|Antigua and Barbuda|Antigua
+argentina|Argentina
+armenia|Armenia
+australia|Australia
+austria|Austria
+azerbaijan|Azerbaijan
+bahamas|Bahamas
+bahrain|Bahrain
+bangladesh|Bangladesh
+barbados|Barbados
+belarus|Belarus
+belgium|Belgium
+belize|Belize
+benin|Benin
+bhutan|Bhutan
+bolivia|Bolivia
+bosnia|Bosnia and Herzegovina|Bosnia
+botswana|Botswana
+brazil|Brazil|Brasil
+brunei|Brunei
+bulgaria|Bulgaria
+burkina|Burkina Faso
+burundi|Burundi
+cabo-verde|Cabo Verde|Cape Verde
+cambodia|Cambodia
+cameroon|Cameroon
+canada|Canada
+car|Central African Republic|CAR
+chad|Chad
+chile|Chile
+china|China|PRC;People's Republic of China
+colombia|Colombia
+comoros|Comoros
+drc|DR Congo|Democratic Republic of the Congo;DRC;Congo;Zaire;Congo Kinshasa
+congo|Republic of the Congo|Congo;Congo Brazzaville
+costa-rica|Costa Rica
+ivory-coast|Côte d'Ivoire|Ivory Coast
+croatia|Croatia
+cuba|Cuba
+cyprus|Cyprus
+czechia|Czechia|Czech Republic
+denmark|Denmark
+djibouti|Djibouti
+dominica|Dominica
+dominican-republic|Dominican Republic
+ecuador|Ecuador
+egypt|Egypt
+el-salvador|El Salvador
+equatorial-guinea|Equatorial Guinea
+eritrea|Eritrea
+estonia|Estonia
+eswatini|Eswatini|Swaziland
+ethiopia|Ethiopia
+fiji|Fiji
+finland|Finland
+france|France
+gabon|Gabon
+gambia|Gambia
+georgia|Georgia
+germany|Germany
+ghana|Ghana
+greece|Greece
+grenada|Grenada
+guatemala|Guatemala
+guinea|Guinea
+guinea-bissau|Guinea-Bissau
+guyana|Guyana
+haiti|Haiti
+honduras|Honduras
+hungary|Hungary
+iceland|Iceland
+india|India
+indonesia|Indonesia
+iran|Iran
+iraq|Iraq
+ireland|Ireland
+israel|Israel
+italy|Italy
+jamaica|Jamaica
+japan|Japan
+jordan|Jordan
+kazakhstan|Kazakhstan
+kenya|Kenya
+kiribati|Kiribati
+kosovo|Kosovo
+kuwait|Kuwait
+kyrgyzstan|Kyrgyzstan
+laos|Laos
+latvia|Latvia
+lebanon|Lebanon
+lesotho|Lesotho
+liberia|Liberia
+libya|Libya
+liechtenstein|Liechtenstein
+lithuania|Lithuania
+luxembourg|Luxembourg
+madagascar|Madagascar
+malawi|Malawi
+malaysia|Malaysia
+maldives|Maldives
+mali|Mali
+malta|Malta
+marshall-islands|Marshall Islands
+mauritania|Mauritania
+mauritius|Mauritius
+mexico|Mexico
+micronesia|Micronesia
+moldova|Moldova
+monaco|Monaco
+mongolia|Mongolia
+montenegro|Montenegro
+morocco|Morocco
+mozambique|Mozambique
+myanmar|Myanmar|Burma
+namibia|Namibia
+nauru|Nauru
+nepal|Nepal
+netherlands|Netherlands|Holland
+new-zealand|New Zealand
+nicaragua|Nicaragua
+niger|Niger
+nigeria|Nigeria
+north-korea|North Korea|Korea;DPRK
+north-macedonia|North Macedonia|Macedonia
+norway|Norway
+oman|Oman
+pakistan|Pakistan
+palau|Palau
+palestine|Palestine
+panama|Panama
+papua-new-guinea|Papua New Guinea|PNG
+paraguay|Paraguay
+peru|Peru
+philippines|Philippines
+poland|Poland
+portugal|Portugal
+qatar|Qatar
+romania|Romania
+russia|Russia|Russian Federation
+rwanda|Rwanda
+st-kitts|Saint Kitts and Nevis|St Kitts and Nevis
+st-lucia|Saint Lucia|St Lucia
+st-vincent|Saint Vincent and the Grenadines|St Vincent
+samoa|Samoa
+san-marino|San Marino
+sao-tome|São Tomé and Príncipe|Sao Tome
+saudi-arabia|Saudi Arabia
+senegal|Senegal
+serbia|Serbia
+seychelles|Seychelles
+sierra-leone|Sierra Leone
+singapore|Singapore
+slovakia|Slovakia
+slovenia|Slovenia
+solomon-islands|Solomon Islands
+somalia|Somalia
+south-africa|South Africa
+south-korea|South Korea|Korea;Republic of Korea
+south-sudan|South Sudan
+spain|Spain
+sri-lanka|Sri Lanka
+sudan|Sudan
+suriname|Suriname
+sweden|Sweden
+switzerland|Switzerland
+syria|Syria
+taiwan|Taiwan
+tajikistan|Tajikistan
+tanzania|Tanzania
+thailand|Thailand
+timor-leste|Timor-Leste|East Timor
+togo|Togo
+tonga|Tonga
+trinidad|Trinidad and Tobago|Trinidad
+tunisia|Tunisia
+turkey|Turkey|Türkiye
+turkmenistan|Turkmenistan
+tuvalu|Tuvalu
+uganda|Uganda
+ukraine|Ukraine
+uae|United Arab Emirates|UAE
+uk|United Kingdom|UK;Great Britain;Britain;England
+usa|United States|USA;US;America;United States of America
+uruguay|Uruguay
+uzbekistan|Uzbekistan
+vanuatu|Vanuatu
+vatican|Vatican City|Vatican;Holy See
+venezuela|Venezuela
+vietnam|Vietnam
+yemen|Yemen
+zambia|Zambia
+zimbabwe|Zimbabwe
+!greenland|Greenland
+!antarctica|Antarctica
+`,
+  states: `
+al|Alabama|AL
+ak|Alaska|AK
+az|Arizona|AZ
+ar|Arkansas|AR
+ca|California|CA;Cali
+co|Colorado|CO
+ct|Connecticut|CT
+de|Delaware|DE
+fl|Florida|FL
+ga|Georgia|GA
+hi|Hawaii|HI
+id|Idaho|ID
+il|Illinois|IL
+in|Indiana|IN
+ia|Iowa|IA
+ks|Kansas|KS
+ky|Kentucky|KY
+la|Louisiana|LA
+me|Maine|ME
+md|Maryland|MD
+ma|Massachusetts|MA;Mass
+mi|Michigan|MI
+mn|Minnesota|MN
+ms|Mississippi|MS
+mo|Missouri|MO
+mt|Montana|MT
+ne|Nebraska|NE
+nv|Nevada|NV
+nh|New Hampshire|NH
+nj|New Jersey|NJ;Jersey
+nm|New Mexico|NM
+ny|New York|NY
+nc|North Carolina|NC
+nd|North Dakota|ND
+oh|Ohio|OH
+ok|Oklahoma|OK
+or|Oregon|OR
+pa|Pennsylvania|PA
+ri|Rhode Island|RI
+sc|South Carolina|SC
+sd|South Dakota|SD
+tn|Tennessee|TN
+tx|Texas|TX
+ut|Utah|UT
+vt|Vermont|VT
+va|Virginia|VA
+wa|Washington|WA;Washington State
+wv|West Virginia|WV
+wi|Wisconsin|WI
+wy|Wyoming|WY
+!dc|Washington, DC|DC;District of Columbia;Washington DC
+!pr|Puerto Rico|PR
+`,
+  cities: `
+nyc|New York City|New York;NYC;NY
+la|Los Angeles|LA
+chicago|Chicago
+houston|Houston
+phoenix|Phoenix
+philadelphia|Philadelphia|Philly
+san-antonio|San Antonio
+san-diego|San Diego
+dallas|Dallas
+san-jose|San Jose
+austin|Austin
+jacksonville|Jacksonville
+fort-worth|Fort Worth
+columbus|Columbus
+charlotte|Charlotte
+indianapolis|Indianapolis|Indy
+san-francisco|San Francisco|SF;San Fran
+seattle|Seattle
+denver|Denver
+washington|Washington, DC|DC;Washington;Washington DC
+oklahoma-city|Oklahoma City|OKC
+nashville|Nashville
+el-paso|El Paso
+boston|Boston
+portland|Portland
+las-vegas|Las Vegas|Vegas
+detroit|Detroit
+memphis|Memphis
+louisville|Louisville
+baltimore|Baltimore
+milwaukee|Milwaukee
+albuquerque|Albuquerque
+tucson|Tucson
+fresno|Fresno
+sacramento|Sacramento
+mesa|Mesa
+kansas-city|Kansas City|KC
+atlanta|Atlanta
+omaha|Omaha
+colorado-springs|Colorado Springs
+raleigh|Raleigh
+long-beach|Long Beach
+virginia-beach|Virginia Beach
+miami|Miami
+oakland|Oakland
+minneapolis|Minneapolis
+tulsa|Tulsa
+bakersfield|Bakersfield
+wichita|Wichita
+arlington|Arlington
+tampa|Tampa
+new-orleans|New Orleans|NOLA
+cleveland|Cleveland
+honolulu|Honolulu
+anaheim|Anaheim
+lexington|Lexington
+aurora|Aurora
+st-louis|St. Louis|Saint Louis
+pittsburgh|Pittsburgh
+cincinnati|Cincinnati
+anchorage|Anchorage
+buffalo|Buffalo
+newark|Newark
+jersey-city|Jersey City
+orlando|Orlando
+st-paul|St. Paul|Saint Paul
+salt-lake-city|Salt Lake City|SLC
+richmond|Richmond
+boise|Boise
+birmingham|Birmingham
+spokane|Spokane
+des-moines|Des Moines
+riverside|Riverside
+corpus-christi|Corpus Christi
+`,
+  airports: `
+atl|Atlanta (ATL)|ATL;Atlanta;Hartsfield;Hartsfield Jackson
+dfw|Dallas/Fort Worth (DFW)|DFW;Dallas Fort Worth;Dallas;Fort Worth
+dal|Dallas Love Field (DAL)|DAL;Love Field;Dallas
+den|Denver (DEN)|DEN;Denver
+ord|Chicago O'Hare (ORD)|ORD;O'Hare;Chicago;Chicago O'Hare
+mdw|Chicago Midway (MDW)|MDW;Midway;Chicago
+lax|Los Angeles (LAX)|LAX;Los Angeles;LA
+jfk|New York JFK (JFK)|JFK;Kennedy;John F Kennedy;New York
+lga|New York LaGuardia (LGA)|LGA;LaGuardia;New York
+ewr|Newark (EWR)|EWR;Newark;New York
+clt|Charlotte (CLT)|CLT;Charlotte
+las|Las Vegas (LAS)|LAS;Las Vegas;Vegas;Harry Reid;McCarran
+mco|Orlando (MCO)|MCO;Orlando
+mia|Miami (MIA)|MIA;Miami
+sea|Seattle-Tacoma (SEA)|SEA;Seattle;Sea-Tac;Seatac
+sfo|San Francisco (SFO)|SFO;San Francisco
+phx|Phoenix (PHX)|PHX;Phoenix;Sky Harbor
+iah|Houston Bush (IAH)|IAH;Houston;Bush Intercontinental
+hou|Houston Hobby (HOU)|HOU;Houston;Hobby
+bos|Boston (BOS)|BOS;Boston;Logan
+msp|Minneapolis-St. Paul (MSP)|MSP;Minneapolis;St Paul
+dtw|Detroit (DTW)|DTW;Detroit
+phl|Philadelphia (PHL)|PHL;Philadelphia;Philly
+fll|Fort Lauderdale (FLL)|FLL;Fort Lauderdale
+bwi|Baltimore/Washington (BWI)|BWI;Baltimore;Washington
+iad|Washington Dulles (IAD)|IAD;Dulles;Washington
+dca|Washington Reagan (DCA)|DCA;Reagan;Reagan National;Washington
+slc|Salt Lake City (SLC)|SLC;Salt Lake City
+san|San Diego (SAN)|SAN;San Diego
+tpa|Tampa (TPA)|TPA;Tampa
+bna|Nashville (BNA)|BNA;Nashville
+aus|Austin (AUS)|AUS;Austin
+hnl|Honolulu (HNL)|HNL;Honolulu
+pdx|Portland (PDX)|PDX;Portland
+stl|St. Louis (STL)|STL;St Louis
+msy|New Orleans (MSY)|MSY;New Orleans
+rdu|Raleigh-Durham (RDU)|RDU;Raleigh;Durham
+sjc|San Jose (SJC)|SJC;San Jose
+oak|Oakland (OAK)|OAK;Oakland
+smf|Sacramento (SMF)|SMF;Sacramento
+sna|Orange County (SNA)|SNA;John Wayne;Orange County
+mci|Kansas City (MCI)|MCI;Kansas City
+`,
+  dogs: `
+frenchie|French Bulldog|Frenchie
+lab|Labrador Retriever|Lab;Labrador
+golden|Golden Retriever|Golden
+gsd|German Shepherd|German Shepherd Dog;GSD;Alsatian
+poodle|Poodle|Standard Poodle;Toy Poodle;Miniature Poodle
+dachshund|Dachshund|Wiener Dog;Doxie
+beagle|Beagle
+rottweiler|Rottweiler|Rottie
+bulldog|Bulldog|English Bulldog;British Bulldog
+gsp|German Shorthaired Pointer|GSP
+yorkie|Yorkshire Terrier|Yorkie
+aussie|Australian Shepherd|Aussie
+cavalier|Cavalier King Charles Spaniel|Cavalier
+cane-corso|Cane Corso
+pembroke|Pembroke Welsh Corgi|Corgi
+cardigan|Cardigan Welsh Corgi|Corgi
+mini-schnauzer|Miniature Schnauzer|Schnauzer
+boxer|Boxer
+great-dane|Great Dane
+shih-tzu|Shih Tzu
+husky|Siberian Husky|Husky
+doberman|Doberman Pinscher|Doberman
+bernese|Bernese Mountain Dog|Berner
+havanese|Havanese
+boston-terrier|Boston Terrier
+pomeranian|Pomeranian|Pom
+sheltie|Shetland Sheepdog|Sheltie
+chihuahua|Chihuahua
+border-collie|Border Collie
+pug|Pug
+springer|English Springer Spaniel|Springer Spaniel
+cocker|Cocker Spaniel
+maltese|Maltese
+cattle-dog|Australian Cattle Dog|Blue Heeler;Heeler
+mastiff|Mastiff
+malinois|Belgian Malinois|Malinois
+newfoundland|Newfoundland|Newfie
+weimaraner|Weimaraner
+vizsla|Vizsla
+collie|Collie
+bichon|Bichon Frise|Bichon
+basset|Basset Hound
+bloodhound|Bloodhound
+akita|Akita
+shiba|Shiba Inu
+samoyed|Samoyed
+st-bernard|Saint Bernard|St Bernard
+dalmatian|Dalmatian
+westie|West Highland White Terrier|Westie
+scottie|Scottish Terrier|Scottie
+greyhound|Greyhound
+!labradoodle|Labradoodle
+!goldendoodle|Goldendoodle
+!pitbull|Pit Bull|Pitbull;Pit Bull Terrier
+`,
+  mlb: `
+bonds|Barry Bonds|Bonds
+aaron|Hank Aaron|Aaron;Henry Aaron
+ruth|Babe Ruth|Ruth
+pujols|Albert Pujols|Pujols
+arod|Alex Rodriguez|A-Rod;ARod;Rodriguez
+mays|Willie Mays|Mays
+griffey|Ken Griffey Jr.|Griffey;Ken Griffey;Griffey Jr
+thome|Jim Thome|Thome
+sosa|Sammy Sosa|Sosa
+frobinson|Frank Robinson|Robinson
+mcgwire|Mark McGwire|McGwire
+killebrew|Harmon Killebrew|Killebrew
+palmeiro|Rafael Palmeiro|Palmeiro
+rjackson|Reggie Jackson|Jackson;Mr October
+ramirez|Manny Ramirez|Ramirez;Manny
+schmidt|Mike Schmidt|Schmidt
+ortiz|David Ortiz|Ortiz;Big Papi
+mantle|Mickey Mantle|Mantle
+foxx|Jimmie Foxx|Foxx;Jimmy Foxx
+mccovey|Willie McCovey|McCovey
+fthomas|Frank Thomas|Thomas;Big Hurt
+twilliams|Ted Williams|Williams
+banks|Ernie Banks|Banks
+mathews|Eddie Mathews|Mathews
+ott|Mel Ott|Ott
+sheffield|Gary Sheffield|Sheffield
+murray|Eddie Murray|Murray
+cabrera|Miguel Cabrera|Cabrera;Miggy
+stanton|Giancarlo Stanton|Stanton
+judge|Aaron Judge|Judge
+ohtani|Shohei Ohtani|Ohtani
+trout|Mike Trout|Trout
+gehrig|Lou Gehrig|Gehrig
+dimaggio|Joe DiMaggio|DiMaggio
+maris|Roger Maris|Maris
+musial|Stan Musial|Musial
+yaz|Carl Yastrzemski|Yastrzemski;Yaz
+winfield|Dave Winfield|Winfield
+dawson|Andre Dawson|Dawson
+mcgriff|Fred McGriff|McGriff
+canseco|Jose Canseco|Canseco
+cjones|Chipper Jones|Chipper;Jones
+piazza|Mike Piazza|Piazza
+bench|Johnny Bench|Bench
+berra|Yogi Berra|Berra;Yogi
+stargell|Willie Stargell|Stargell
+bagwell|Jeff Bagwell|Bagwell
+guerrero|Vladimir Guerrero|Guerrero;Vlad
+delgado|Carlos Delgado|Delgado
+cruz|Nelson Cruz|Cruz
+dunn|Adam Dunn|Dunn
+konerko|Paul Konerko|Konerko
+greenberg|Hank Greenberg|Greenberg
+jrobinson|Jackie Robinson|Robinson;Jackie
+clemente|Roberto Clemente|Clemente
+cobb|Ty Cobb|Cobb
+rose|Pete Rose|Rose
+ripken|Cal Ripken Jr.|Ripken;Cal Ripken
+jeter|Derek Jeter|Jeter
+harper|Bryce Harper|Harper
+`,
+  surnames: `
+smith|Smith
+johnson|Johnson
+williams|Williams
+brown|Brown
+jones|Jones
+garcia|Garcia
+miller|Miller
+davis|Davis
+rodriguez|Rodriguez
+martinez|Martinez
+hernandez|Hernandez
+lopez|Lopez
+gonzalez|Gonzalez
+wilson|Wilson
+anderson|Anderson
+thomas|Thomas
+taylor|Taylor
+moore|Moore
+jackson|Jackson
+martin|Martin
+lee|Lee
+perez|Perez
+thompson|Thompson
+white|White
+harris|Harris
+sanchez|Sanchez
+clark|Clark
+ramirez|Ramirez
+lewis|Lewis
+robinson|Robinson
+walker|Walker
+young|Young
+allen|Allen
+king|King
+wright|Wright
+scott|Scott
+torres|Torres
+nguyen|Nguyen
+hill|Hill
+flores|Flores
+green|Green
+adams|Adams
+nelson|Nelson
+baker|Baker
+hall|Hall
+rivera|Rivera
+campbell|Campbell
+mitchell|Mitchell
+carter|Carter
+roberts|Roberts
+kim|Kim
+patel|Patel
+murphy|Murphy
+cook|Cook
+rogers|Rogers
+morgan|Morgan
+cooper|Cooper
+peterson|Peterson
+kelly|Kelly
+reed|Reed
+bailey|Bailey
+bell|Bell
+howard|Howard
+ward|Ward
+cox|Cox
+wood|Wood
+collins|Collins
+stewart|Stewart
+evans|Evans
+turner|Turner
+phillips|Phillips
+parker|Parker
+edwards|Edwards
+morris|Morris
+sullivan|Sullivan
+obrien|O'Brien
+wang|Wang
+chen|Chen
+cohen|Cohen
+`,
+  elements: `
+h|Hydrogen|H
+he|Helium|He
+li|Lithium|Li
+be|Beryllium|Be
+b|Boron|B
+c|Carbon|C
+n|Nitrogen|N
+o|Oxygen|O
+f|Fluorine|F
+ne|Neon|Ne
+na|Sodium|Na
+mg|Magnesium|Mg
+al|Aluminum|Al;Aluminium
+si|Silicon|Si
+p|Phosphorus|P
+s|Sulfur|S;Sulphur
+cl|Chlorine|Cl
+ar|Argon|Ar
+k|Potassium|K
+ca|Calcium|Ca
+sc|Scandium|Sc
+ti|Titanium|Ti
+v|Vanadium|V
+cr|Chromium|Cr
+mn|Manganese|Mn
+fe|Iron|Fe
+co|Cobalt|Co
+ni|Nickel|Ni
+cu|Copper|Cu
+zn|Zinc|Zn
+ga|Gallium|Ga
+ge|Germanium|Ge
+as|Arsenic|As
+se|Selenium|Se
+br|Bromine|Br
+kr|Krypton|Kr
+rb|Rubidium|Rb
+sr|Strontium|Sr
+y|Yttrium|Y
+zr|Zirconium|Zr
+nb|Niobium|Nb
+mo|Molybdenum|Mo
+tc|Technetium|Tc
+ru|Ruthenium|Ru
+rh|Rhodium|Rh
+pd|Palladium|Pd
+ag|Silver|Ag
+cd|Cadmium|Cd
+in|Indium|In
+sn|Tin|Sn
+sb|Antimony|Sb
+te|Tellurium|Te
+i|Iodine|I
+xe|Xenon|Xe
+cs|Cesium|Cs;Caesium
+ba|Barium|Ba
+la|Lanthanum|La
+ce|Cerium|Ce
+pr|Praseodymium|Pr
+nd|Neodymium|Nd
+pm|Promethium|Pm
+sm|Samarium|Sm
+eu|Europium|Eu
+gd|Gadolinium|Gd
+tb|Terbium|Tb
+dy|Dysprosium|Dy
+ho|Holmium|Ho
+er|Erbium|Er
+tm|Thulium|Tm
+yb|Ytterbium|Yb
+lu|Lutetium|Lu
+hf|Hafnium|Hf
+ta|Tantalum|Ta
+w|Tungsten|W
+re|Rhenium|Re
+os|Osmium|Os
+ir|Iridium|Ir
+pt|Platinum|Pt
+au|Gold|Au
+hg|Mercury|Hg
+tl|Thallium|Tl
+pb|Lead|Pb
+bi|Bismuth|Bi
+po|Polonium|Po
+at|Astatine|At
+rn|Radon|Rn
+fr|Francium|Fr
+ra|Radium|Ra
+ac|Actinium|Ac
+th|Thorium|Th
+pa|Protactinium|Pa
+u|Uranium|U
+np|Neptunium|Np
+pu|Plutonium|Pu
+am|Americium|Am
+cm|Curium|Cm
+bk|Berkelium|Bk
+cf|Californium|Cf
+es|Einsteinium|Es
+fm|Fermium|Fm
+md|Mendelevium|Md
+no|Nobelium|No
+lr|Lawrencium|Lr
+rf|Rutherfordium|Rf
+db|Dubnium|Db
+sg|Seaborgium|Sg
+bh|Bohrium|Bh
+hs|Hassium|Hs
+mt|Meitnerium|Mt
+ds|Darmstadtium|Ds
+rg|Roentgenium|Rg
+cn|Copernicium|Cn
+nh|Nihonium|Nh
+fl|Flerovium|Fl
+mc|Moscovium|Mc
+lv|Livermorium|Lv
+ts|Tennessine|Ts
+og|Oganesson|Og
+`,
+  nfl: `
+chiefs|Kansas City Chiefs|Chiefs;Kansas City;KC;Dallas Texans
+raiders|Raiders|Oakland Raiders;Las Vegas Raiders;Los Angeles Raiders;Oakland;Las Vegas;Los Angeles
+colts|Colts|Baltimore Colts;Indianapolis Colts;Indianapolis;Indy;Baltimore
+vikings|Minnesota Vikings|Vikings;Minnesota
+cowboys|Dallas Cowboys|Cowboys;Dallas
+dolphins|Miami Dolphins|Dolphins;Miami
+washington|Washington Commanders|Commanders;Redskins;Washington Redskins;Washington Football Team;Washington
+broncos|Denver Broncos|Broncos;Denver
+rams|Rams|Los Angeles Rams;St Louis Rams;LA Rams;Los Angeles;St Louis
+eagles|Philadelphia Eagles|Eagles;Philadelphia;Philly
+packers|Green Bay Packers|Packers;Green Bay
+jets|New York Jets|Jets;New York
+giants|New York Giants|Giants;New York
+steelers|Pittsburgh Steelers|Steelers;Pittsburgh
+patriots|New England Patriots|Patriots;Pats;New England;Boston Patriots
+niners|San Francisco 49ers|49ers;Niners;San Francisco
+bears|Chicago Bears|Bears;Chicago
+lions|Detroit Lions|Lions;Detroit
+bengals|Cincinnati Bengals|Bengals;Cincinnati
+browns|Cleveland Browns|Browns;Cleveland
+ravens|Baltimore Ravens|Ravens;Baltimore
+texans|Houston Texans|Texans;Houston
+titans|Tennessee Titans|Titans;Tennessee;Houston Oilers;Oilers;Houston
+jaguars|Jacksonville Jaguars|Jaguars;Jags;Jacksonville
+chargers|Chargers|Los Angeles Chargers;San Diego Chargers;San Diego;Los Angeles
+seahawks|Seattle Seahawks|Seahawks;Seattle
+cardinals|Arizona Cardinals|Cardinals;Arizona;St Louis Cardinals;St Louis
+falcons|Atlanta Falcons|Falcons;Atlanta
+saints|New Orleans Saints|Saints;New Orleans
+panthers|Carolina Panthers|Panthers;Carolina
+bucs|Tampa Bay Buccaneers|Buccaneers;Bucs;Tampa Bay;Tampa
+bills|Buffalo Bills|Bills;Buffalo
+`,
+};
+
+// Notes shown when an out-of-scope ("!") entry is guessed. No strike.
+const OUT_OF_SCOPE = {
+  greenland: "Greenland is part of the Kingdom of Denmark, so it isn't counted. No strike.",
+  antarctica: "Antarctica isn't a country. No strike.",
+  dc: "Washington, DC isn't a state. No strike.",
+  pr: "Puerto Rico is a US territory, not a state. No strike.",
+  labradoodle: "Labradoodles aren't a breed the AKC recognizes. No strike.",
+  goldendoodle: "Goldendoodles aren't a breed the AKC recognizes. No strike.",
+  pitbull: "The AKC doesn't recognize \"pit bull\" as a breed. No strike.",
+};
+
+// answers: [id, revealed value]. near: [id, label, value] for ranks 6-10.
+const QUESTIONS = [
+  { id: "countries-area", level: "Easy", title: "Largest countries by area",
+    prompt: "The 5 largest countries in the world by total area",
+    rule: "Total area, including inland water. Order doesn't matter.",
+    source: "Source: CIA World Factbook", pool: "countries",
+    answers: [["russia","6.60M sq mi"],["canada","3.86M sq mi"],["usa","3.80M sq mi"],["china","3.70M sq mi"],["brazil","3.29M sq mi"]],
+    near: [["australia","#6","2.97M sq mi"],["india","#7","1.27M sq mi"],["argentina","#8","1.07M sq mi"],["kazakhstan","#9","1.05M sq mi"],["algeria","#10","0.92M sq mi"]],
+    notes: {} },
+  { id: "states-pop", level: "Easy", title: "Most populous US states",
+    prompt: "The 5 most populous US states",
+    rule: "Resident population counted in the 2020 Census.",
+    source: "Source: US Census Bureau, 2020 Census", pool: "states",
+    answers: [["ca","39.5M"],["tx","29.1M"],["fl","21.5M"],["ny","20.2M"],["pa","13.0M"]],
+    near: [["il","#6","12.8M"],["oh","#7","11.8M"],["ga","#8","10.7M"],["nc","#9","10.4M"],["mi","#10","10.1M"]],
+    notes: { il: "Illinois is #6, about 190,000 people behind Pennsylvania." } },
+  { id: "countries-pop", level: "Easy", title: "Most populous countries",
+    prompt: "The 5 most populous countries in the world",
+    rule: "Population in 2024. Countries only, not territories.",
+    source: "Source: UN World Population Prospects 2024", pool: "countries",
+    answers: [["india","1.45B"],["china","1.42B"],["usa","345M"],["indonesia","284M"],["pakistan","251M"]],
+    near: [["nigeria","#6","233M"],["brazil","#7","212M"],["bangladesh","#8","174M"],["russia","#9","145M"],["ethiopia","#10","132M"]],
+    notes: {} },
+  { id: "states-area", level: "Easy", title: "Largest US states by area",
+    prompt: "The 5 largest US states by total area",
+    rule: "Total area, land plus water.",
+    source: "Source: US Census Bureau", pool: "states",
+    answers: [["ak","665,384 sq mi"],["tx","268,596 sq mi"],["ca","163,695 sq mi"],["mt","147,040 sq mi"],["nm","121,590 sq mi"]],
+    near: [["az","#6","113,990 sq mi"],["nv","#7","110,572 sq mi"],["co","#8","104,094 sq mi"],["or","#9","98,379 sq mi"],["wy","#10","97,813 sq mi"]],
+    notes: {} },
+  { id: "airports", level: "Medium", title: "Busiest US airports",
+    prompt: "The 5 busiest US airports by passengers boarding in 2024",
+    rule: "Name the airport, its city, or its three-letter code.",
+    source: "Source: FAA passenger boarding data, calendar year 2024", pool: "airports",
+    answers: [["atl","52.5M boardings"],["dfw","42.4M"],["den","40.0M"],["ord","38.6M"],["lax","37.8M"]],
+    near: [["jfk","#6","31.2M"],["clt","#7","28.5M"],["las","#8","28.2M"],["mco","#9","27.9M"],["mia","#10","26.6M"]],
+    notes: {} },
+  { id: "cities-pop", level: "Medium", title: "Most populous US cities",
+    prompt: "The 5 most populous US cities",
+    rule: "Population inside city limits (not the metro area), 2020 Census.",
+    source: "Source: US Census Bureau, 2020 Census", pool: "cities",
+    answers: [["nyc","8,804,190"],["la","3,898,747"],["chicago","2,746,388"],["houston","2,304,580"],["phoenix","1,608,139"]],
+    near: [["philadelphia","#6","1,603,797"],["san-antonio","#7","1,434,625"],["san-diego","#8","1,386,932"],["dallas","#9","1,304,379"],["san-jose","#10","1,013,240"]],
+    notes: { philadelphia: "Philadelphia is #6, just 4,342 people behind #5." } },
+  { id: "dogs", level: "Medium", title: "Most popular dog breeds",
+    prompt: "The 5 most popular dog breeds in the US",
+    rule: "Ranked by AKC registrations in 2024. All sizes of Poodle count as one breed.",
+    source: "Source: American Kennel Club, 2024 rankings", pool: "dogs",
+    answers: [["frenchie","#1"],["lab","#2"],["golden","#3"],["gsd","#4"],["poodle","#5"]],
+    near: [["dachshund","#6",""],["beagle","#7",""],["rottweiler","#8",""],["bulldog","#9",""],["gsp","#10",""]],
+    notes: {} },
+  { id: "mlb-hr", level: "Medium", title: "Career home run leaders",
+    prompt: "The 5 MLB players with the most career home runs",
+    rule: "Regular-season home runs only.",
+    source: "Source: Baseball-Reference", pool: "mlb",
+    answers: [["bonds","762 HR"],["aaron","755"],["ruth","714"],["pujols","703"],["arod","696"]],
+    near: [["mays","#6","660"],["griffey","#7","630"],["thome","#8","612"],["sosa","#9","609"],["frobinson","#10","586"]],
+    notes: {} },
+  { id: "states-small", level: "Hard", title: "Smallest US states",
+    prompt: "The 5 smallest US states by total area",
+    rule: "Total area, land plus water.",
+    source: "Source: US Census Bureau", pool: "states",
+    answers: [["ri","1,545 sq mi"],["de","2,489 sq mi"],["ct","5,543 sq mi"],["nj","8,723 sq mi"],["nh","9,349 sq mi"]],
+    near: [["vt","#6","9,616 sq mi"],["ma","#7","10,554 sq mi"],["hi","#8","10,932 sq mi"],["md","#9","12,406 sq mi"],["wv","#10","24,230 sq mi"]],
+    notes: { hi: "Hawaii is #8 by total area. By land area alone it would be #4.",
+             vt: "Vermont is #6, only 267 square miles bigger than New Hampshire." } },
+  { id: "surnames", level: "Hard", title: "Most common US last names",
+    prompt: "The 5 most common last names in the US",
+    rule: "Last names reported in the 2020 Census.",
+    source: "Source: US Census Bureau, 2020 Census name data (released April 2026)", pool: "surnames", freeform: true,
+    answers: [["smith","#1"],["johnson","#2"],["williams","#3"],["brown","#4"],["jones","#5"]],
+    near: [["garcia","#6",""],["miller","#7",""],["rodriguez","#8",""],["davis","#9",""],["martinez","#10",""]],
+    notes: {} },
+  { id: "crust", level: "Hard", title: "Elements in Earth's crust",
+    prompt: "The 5 most abundant elements in Earth's crust",
+    rule: "Share of the crust by mass. Element names or symbols both work.",
+    source: "Source: CRC Handbook of Chemistry and Physics", pool: "elements",
+    answers: [["o","46.1%"],["si","28.2%"],["al","8.2%"],["fe","5.6%"],["ca","4.2%"]],
+    near: [["na","#6","2.4%"],["mg","#7","2.3%"],["k","#8","2.1%"],["ti","#9","0.57%"],["h","#10","0.14%"]],
+    notes: { c: "Carbon makes up only about 0.02% of the crust." } },
+  { id: "super-bowl", level: "Hard", title: "First 5 Super Bowl losers",
+    prompt: "The teams that lost the first 5 Super Bowls",
+    rule: "Super Bowls I through V. Any city or name the franchise has used counts.",
+    source: "Source: NFL record book", pool: "nfl",
+    slots: ["I","II","III","IV","V"],
+    nearMsg: (name, label) => `${name} lost Super Bowl ${label}, just outside the first five.`,
+    nearShow: (label) => `SB ${label}`,
+    answers: [["chiefs","Lost to Green Bay, 35–10"],["raiders","Lost to Green Bay, 33–14"],["colts","Lost to the Jets, 16–7"],["vikings","Lost to Kansas City, 23–7"],["cowboys","Lost to Baltimore, 16–13"]],
+    near: [["dolphins","VI","Lost to Dallas, 24–3"],["washington","VII","Lost to Miami, 14–7"],["broncos","XII","Lost to Dallas, 27–10"],["rams","XIV","Lost to Pittsburgh, 31–19"],["eagles","XV","Lost to Oakland, 27–10"]],
+    notes: { packers: "Green Bay won Super Bowls I and II.", jets: "The Jets won Super Bowl III." } },
+];
+
+// ----- Matching (ported from Top5Core's Normalizer and Matcher) -----
+
+function normalize(input) {
+  let s = input.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+    .replace(/['’]/g, "").replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim();
+  const words = s.split(" ").filter(Boolean);
+  if (words.length > 1 && words[0] === "the") words.shift();
+  return words.join(" ");
+}
+
+function editDistance(a, b) {
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[b.length];
+}
+
+// No fuzzy matching under 5 characters: Iran/Iraq, Mali/Bali are one edit apart.
+function allowedEdits(n) { return n < 5 ? 0 : n <= 8 ? 1 : 2; }
+
+function parsePool(text) {
+  return text.trim().split("\n").map(line => {
+    const outOfScope = line.startsWith("!");
+    const [id, name, aliases = ""] = line.replace(/^!/, "").split("|");
+    return { id, name, aliases: aliases ? aliases.split(";") : [], outOfScope };
+  });
+}
+
+function makeMatcher(entries) {
+  const keys = [];
+  for (const e of entries) for (const v of [e.name, ...e.aliases]) keys.push({ t: normalize(v), e });
+  const uniq = list => [...new Map(list.map(e => [e.id, e])).values()];
+
+  return {
+    // exact -> submit; choose -> player picks one; suggest -> "Did you mean?"; none
+    lookup(input) {
+      const q = normalize(input);
+      if (!q) return { kind: "none" };
+      const exact = uniq(keys.filter(k => k.t === q).map(k => k.e));
+      if (exact.length === 1) return { kind: "exact", entry: exact[0] };
+      if (exact.length > 1) return { kind: "choose", entries: exact };
+      if (q.length >= 3) {
+        const pre = uniq(keys.filter(k => k.t.startsWith(q)).map(k => k.e));
+        if (pre.length === 1) return { kind: "suggest", entry: pre[0] };
+        if (pre.length > 1 && pre.length <= 4) return { kind: "choose", entries: pre };
+      }
+      const allowed = allowedEdits(q.length);
+      if (allowed > 0) {
+        let best = Infinity, hits = [];
+        for (const k of keys) {
+          const d = editDistance(q, k.t);
+          if (d > allowed) continue;
+          if (d < best) { best = d; hits = [k.e]; } else if (d === best) hits.push(k.e);
+        }
+        hits = uniq(hits);
+        if (hits.length === 1) return { kind: "suggest", entry: hits[0] };
+        if (hits.length > 1 && hits.length <= 4) return { kind: "choose", entries: hits };
+      }
+      return { kind: "none" };
+    },
+    completions(input, limit = 5) {
+      const q = normalize(input);
+      if (q.length < 2) return [];
+      return uniq(keys.filter(k => k.t.startsWith(q) || k.t.includes(" " + q)).map(k => k.e)).slice(0, limit);
+    },
+  };
+}
+
+// ----- Round state -----
+
+function newRound(q) {
+  const entries = parsePool(POOLS[q.pool]);
+  const byId = Object.fromEntries(entries.map(e => [e.id, e]));
+  return {
+    q, byId, matcher: makeMatcher(entries),
+    found: new Set(), guessed: new Set(), misses: [], log: [], over: false, endReason: null,
+  };
+}
+
+function scoreOf(r) {
+  const base = Math.max(0, r.found.size * RULES.pointsPerFind - r.misses.length * RULES.strikeCost);
+  const sweep = r.found.size === 5 && r.misses.length === 0 ? RULES.sweepBonus : 0;
+  return { base, sweep, total: base + sweep };
+}
+
+// Returns { tone: "good"|"bad"|"info", text } describing what happened.
+function guessEntry(r, entry) {
+  if (r.over) return { tone: "info", text: "This round is over." };
+  if (entry.outOfScope) return { tone: "info", text: OUT_OF_SCOPE[entry.id] || `${entry.name} doesn't count here. No strike.` };
+  if (r.guessed.has(entry.id)) return { tone: "info", text: `You already guessed ${entry.name}. No strike.` };
+  r.guessed.add(entry.id);
+
+  const slot = r.q.answers.findIndex(([id]) => id === entry.id);
+  if (slot >= 0) {
+    r.found.add(entry.id);
+    r.log.push("hit");
+    if (r.found.size === 5) end(r, "sweep");
+    return { tone: "good", text: `${entry.name} is on the board.`, slot };
+  }
+  return miss(r, entry.name, entry.id);
+}
+
+function miss(r, name, id) {
+  r.log.push("miss");
+  const near = id && r.q.near.find(([nid]) => nid === id);
+  let text;
+  if (r.q.notes[id]) text = r.q.notes[id];
+  else if (near) text = r.q.nearMsg ? r.q.nearMsg(name, near[1]) : `${name} is ${near[1]}. So close.`;
+  else text = `${name} isn't in the top 10.`;
+  r.misses.push({ name, label: near ? (r.q.nearShow ? r.q.nearShow(near[1]) : near[1]) : "" });
+  text += ` Strike ${r.misses.length}, minus ${RULES.strikeCost} points.`;
+  if (r.misses.length >= RULES.maxStrikes) end(r, "struck");
+  return { tone: "bad", text };
+}
+
+function guessFreeform(r, raw) {
+  if (r.over) return { tone: "info", text: "This round is over." };
+  const name = raw.trim().replace(/\s+/g, " ");
+  const key = "free:" + normalize(name);
+  if (r.guessed.has(key)) return { tone: "info", text: `You already guessed ${name}. No strike.` };
+  r.guessed.add(key);
+  return miss(r, name, null);
+}
+
+function end(r, reason) { r.over = true; r.endReason = reason; }
+
+function shareText(r) {
+  const s = scoreOf(r);
+  const row = r.log.map(x => (x === "hit" ? "🟩" : "❌")).join("") + "⬜".repeat(5 - r.found.size);
+  return `Top 5 · ${r.q.title}\n${row} ${s.total}/${5 * RULES.pointsPerFind + RULES.sweepBonus}`;
+}
+</script>
+
+<script>
+// ===== UI =====
+const $ = id => document.getElementById(id);
+const STORE_KEY = "top5-playtest-v1";
+let round = null;
+
+function loadScores() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
+}
+function saveScore(qid, data) {
+  try {
+    const all = loadScores();
+    if (!all[qid]) { all[qid] = data; localStorage.setItem(STORE_KEY, JSON.stringify(all)); }
+  } catch { /* storage unavailable: scores just aren't remembered */ }
+}
+
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  for (const k of kids) n.append(k);
+  return n;
+}
+
+// ----- Menu -----
+function renderMenu() {
+  const max = 5 * RULES.pointsPerFind + RULES.sweepBonus;
+  $("rules-list").replaceChildren(
+    el("li", {}, "Name all five answers. Order doesn't matter."),
+    el("li", {}, el("b", {}, `+${RULES.pointsPerFind}`), " for each answer you find."),
+    el("li", {}, el("b", {}, `−${RULES.strikeCost}`), ` for each miss. ${RULES.maxStrikes} misses and the round ends.`),
+    el("li", {}, "Find all five with no misses for a ", el("b", {}, `+${RULES.sweepBonus}`), ` bonus (${max} max).`),
+    el("li", {}, "Typos and repeats never count as misses. Stop any time with “I'm done” to keep your points."),
+  );
+  const scores = loadScores();
+  const levels = ["Easy", "Medium", "Hard"].map(level => {
+    const list = el("div", { class: "level-list" });
+    for (const q of QUESTIONS.filter(q => q.level === level)) {
+      const s = scores[q.id];
+      list.append(el("button", { class: "pick", type: "button", onclick: () => startGame(q) },
+        el("span", { class: "pick-title" }, q.title),
+        el("span", { class: "chip" + (s ? " played" : "") }, s ? `${s.score} pts` : "Play")));
+    }
+    return el("section", { class: "level" }, el("h3", {}, level), list);
+  });
+  $("levels").replaceChildren(...levels);
+}
+
+function showMenu() {
+  $("game").hidden = true; $("menu").hidden = false;
+  renderMenu();
+  window.scrollTo(0, 0);
+}
+
+// ----- Game -----
+function startGame(q) {
+  round = newRound(q);
+  $("menu").hidden = true; $("game").hidden = false;
+  $("q-level").textContent = q.level;
+  $("q-prompt").textContent = q.prompt;
+  $("q-rule").textContent = q.rule;
+  $("q-source").textContent = q.source;
+  $("result").hidden = true;
+  $("entry").hidden = false;
+  $("guess").value = "";
+  setFeedback(null);
+  renderStop();
+  renderAll();
+  window.scrollTo(0, 0);
+  $("guess").focus({ preventScroll: true });
+}
+
+function renderAll() {
+  const r = round, s = scoreOf(r);
+  $("score").textContent = r.over ? s.total : s.base;
+  $("strikes").replaceChildren(...Array.from({ length: RULES.maxStrikes }, (_, i) =>
+    el("span", { class: "strike" + (i < r.misses.length ? " on" : ""), "aria-hidden": "true" }, "✕")));
+  $("strikes").setAttribute("aria-label", `${r.misses.length} of ${RULES.maxStrikes} strikes`);
+  renderBoard();
+  $("misses").hidden = r.misses.length === 0;
+  $("miss-list").replaceChildren(...r.misses.map(m => el("li", {}, m.label ? `${m.name} (${m.label})` : m.name)));
+  renderSuggestions();
+  if (r.over) renderResult();
+}
+
+function renderBoard(flipSlot) {
+  const r = round;
+  $("board").replaceChildren(...r.q.answers.map(([id, value], i) => {
+    const found = r.found.has(id), reveal = found || r.over;
+    const cls = "tile " + (found ? "revealed" : r.over ? "missed" : "hidden");
+    const tile = el("div", { class: cls },
+      el("div", { class: "tile-rank" }, r.q.slots ? r.q.slots[i] : String(i + 1)),
+      el("div", { class: "tile-face" },
+        el("span", { class: "name" }, reveal ? r.byId[id].name : ""),
+        el("span", { class: "val" }, reveal ? value : "")));
+    if (found && flipSlot !== i) tile.classList.remove("revealed"), tile.classList.add("shown");
+    return tile;
+  }));
+}
+
+function renderSuggestions() {
+  const box = $("suggest");
+  if (round.over) { box.replaceChildren(); return; }
+  const list = round.matcher.completions($("guess").value).filter(e => !round.guessed.has(e.id));
+  box.replaceChildren(...list.map(e => el("button", { type: "button", onclick: () => commit(e) }, e.name)));
+}
+
+function setFeedback(fb, actions = []) {
+  const box = $("feedback");
+  if (!fb) { box.hidden = true; box.replaceChildren(); return; }
+  box.hidden = false;
+  box.className = "feedback" + (fb.tone === "good" ? " good" : fb.tone === "bad" ? " bad" : "");
+  box.replaceChildren(el("p", {}, fb.text));
+  if (actions.length) box.append(el("div", { class: "actions" }, ...actions));
+}
+
+function commit(entry) {
+  const fb = guessEntry(round, entry);
+  afterGuess(fb);
+}
+
+function afterGuess(fb) {
+  $("guess").value = "";
+  setFeedback(fb);
+  renderAll();
+  if (fb.slot !== undefined) renderBoard(fb.slot);
+  if (round.over) finish(); else $("guess").focus({ preventScroll: true });
+}
+
+function onSubmit(ev) {
+  ev.preventDefault();
+  const raw = $("guess").value;
+  if (!raw.trim() || round.over) return;
+  const name = raw.trim();
+  // Free-form questions (any surname is a real guess) always offer the text as typed.
+  const asTyped = round.q.freeform
+    ? [el("button", { class: "btn ghost small", type: "button", onclick: () => afterGuess(guessFreeform(round, name)) }, `No, guess ${name}`)]
+    : [];
+  const res = round.matcher.lookup(raw);
+  if (res.kind === "exact") return commit(res.entry);
+  if (res.kind === "suggest") {
+    return setFeedback({ tone: "info", text: `Did you mean ${res.entry.name}?` }, [
+      el("button", { class: "btn small", type: "button", onclick: () => commit(res.entry) }, `Guess ${res.entry.name}`),
+      ...(asTyped.length ? asTyped
+        : [el("button", { class: "btn ghost small", type: "button", onclick: () => { setFeedback(null); $("guess").focus(); } }, "No")]),
+    ]);
+  }
+  if (res.kind === "choose") {
+    return setFeedback({ tone: "info", text: "Which one did you mean?" },
+      [...res.entries.map(e => el("button", { class: "btn ghost small", type: "button", onclick: () => commit(e) }, e.name)), ...asTyped]);
+  }
+  if (round.q.freeform) {
+    return setFeedback({ tone: "info", text: `${name} isn't on our list of common names. Guess it anyway?` }, [
+      el("button", { class: "btn small", type: "button", onclick: () => afterGuess(guessFreeform(round, name)) }, `Guess ${name}`),
+      el("button", { class: "btn ghost small", type: "button", onclick: () => { setFeedback(null); $("guess").focus(); } }, "Cancel"),
+    ]);
+  }
+  setFeedback({ tone: "info", text: `We don't recognize "${raw.trim()}". Check the spelling. No strike.` });
+}
+
+function renderStop() {
+  const row = $("stop-row");
+  row.hidden = false;
+  row.replaceChildren(el("button", { class: "btn ghost small", type: "button", onclick: confirmStop }, "I'm done"));
+}
+
+function confirmStop() {
+  const pts = scoreOf(round).base;
+  $("stop-row").replaceChildren(
+    el("p", {}, `Stop now and keep ${pts} point${pts === 1 ? "" : "s"}?`),
+    el("button", { class: "btn small", type: "button", onclick: () => { end(round, "stopped"); setFeedback(null); renderAll(); finish(); } }, "Stop and keep points"),
+    el("button", { class: "btn ghost small", type: "button", onclick: renderStop }, "Keep playing"));
+}
+
+function finish() {
+  $("entry").hidden = true;
+  $("stop-row").hidden = true;
+  const s = scoreOf(round);
+  saveScore(round.q.id, { score: s.total, found: round.found.size, misses: round.misses.length, end: round.endReason });
+}
+
+function renderResult() {
+  const r = round, s = scoreOf(r);
+  const heads = { sweep: s.sweep ? "Clean sweep!" : "All five found", stopped: "You stopped", struck: "Three strikes" };
+  $("result-h").textContent = `${heads[r.endReason]}: ${s.total} points`;
+  const rows = [
+    [`${r.found.size} found × ${RULES.pointsPerFind}`, `${r.found.size * RULES.pointsPerFind}`],
+    [`${r.misses.length} miss${r.misses.length === 1 ? "" : "es"} × ${RULES.strikeCost}`, r.misses.length ? `−${r.misses.length * RULES.strikeCost}` : "0"],
+  ];
+  if (s.base === 0 && r.found.size * RULES.pointsPerFind < r.misses.length * RULES.strikeCost) rows.push(["Score can't go below 0", ""]);
+  if (s.sweep) rows.push(["Clean sweep bonus", `+${s.sweep}`]);
+  $("breakdown").replaceChildren(...rows.flatMap(([a, b]) => [el("dt", {}, a), el("dd", {}, b)]),
+    el("dt", { class: "total" }, "Total"), el("dd", { class: "total" }, String(s.total)));
+  $("near").replaceChildren(el("h4", {}, "Just missed the list"), el("ol", {}, ...r.q.near.map(([id, label, value]) =>
+    el("li", {}, el("span", {}, r.byId[id].name + (value ? ` · ${value}` : "")),
+      el("span", { class: "r" }, r.q.nearShow ? r.q.nearShow(label) : label)))));
+  $("share-text").textContent = shareText(r);
+  $("copy-msg").hidden = true;
+  $("result").hidden = false;
+}
+
+async function copyResult() {
+  const text = $("share-text").textContent;
+  const msg = $("copy-msg");
+  try {
+    await navigator.clipboard.writeText(text);
+    msg.textContent = "Copied. Paste it in your group chat.";
+  } catch {
+    const range = document.createRange();
+    range.selectNodeContents($("share-text"));
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    msg.textContent = "Couldn't copy automatically. The text is selected, so copy it yourself.";
+  }
+  msg.hidden = false;
+}
+
+function nextPuzzle() {
+  const scores = loadScores();
+  const i = QUESTIONS.indexOf(round.q);
+  const order = [...QUESTIONS.slice(i + 1), ...QUESTIONS.slice(0, i)];
+  const next = order.find(q => !scores[q.id]) || order[0];
+  startGame(next);
+}
+
+$("guess-form").addEventListener("submit", onSubmit);
+$("guess").addEventListener("input", () => { renderSuggestions(); });
+$("back").addEventListener("click", showMenu);
+$("copy").addEventListener("click", copyResult);
+$("next").addEventListener("click", nextPuzzle);
+$("reset").addEventListener("click", () => {
+  try { localStorage.removeItem(STORE_KEY); } catch {}
+  $("reset-msg").textContent = "Scores cleared on this device.";
+  $("reset-msg").hidden = false;
+  renderMenu();
+});
+renderMenu();
+</script>
+</body>
+</html>
