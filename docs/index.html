@@ -1040,53 +1040,38 @@ wicked|Wicked
 oppenheimer|Oppenheimer
 gone-wind|Gone with the Wind
 `,
-  condiments: `
+  burger: `
+cheese|Cheese|American cheese;Cheddar;Swiss cheese;Cheeseburger
+lettuce|Lettuce
+tomatoes|Tomatoes|Tomato
 ketchup|Ketchup|Catsup
-peanut-butter|Peanut butter|PB
-mayo|Mayonnaise|Mayo
-mustard|Mustard|Yellow mustard;Dijon;Dijon mustard
-jam|Jam or jelly|Jam;Jelly;Grape jelly;Preserves
-honey|Honey
-bbq|Barbecue sauce|BBQ sauce;BBQ;Barbeque sauce
-ranch|Ranch dressing|Ranch
-maple|Maple syrup|Syrup;Pancake syrup
-hot-sauce|Hot sauce|Sriracha;Tabasco;Frank's RedHot;Cholula
-soy|Soy sauce|Soy
-salsa|Salsa
-italian|Italian dressing|Italian
-steak-sauce|Steak sauce|A1;A.1.
+onions|Onions|Onion;Grilled onions;Raw onions;Caramelized onions
+pickles|Pickles|Pickle
+mustard|Mustard|Yellow mustard;Dijon
+bacon|Bacon
+mayo|Mayo/aioli|Mayo;Mayonnaise;Aioli
+mushrooms|Mushrooms|Mushroom
+avocado|Avocado|Avocados
+fries|Fries|French fries
 relish|Relish|Pickle relish
-teriyaki|Teriyaki sauce|Teriyaki
-chocolate|Chocolate sauce|Chocolate syrup;Hershey's syrup
-honey-mustard|Honey mustard
-caesar|Caesar dressing|Caesar
+eggs|Eggs|Egg;Fried egg
+hot-sauce|Hot sauce|Sriracha;Tabasco
+ranch|Ranch dressing|Ranch
 thousand-island|Thousand Island dressing|Thousand Island;1000 Island
-fish-sauce|Fish sauce
-hoisin|Hoisin sauce|Hoisin
-!tartar|Tartar sauce|Tartar
-!worcestershire|Worcestershire sauce|Worcestershire
-!cocktail|Cocktail sauce
-!sour-cream|Sour cream
+!bbq|Barbecue sauce|BBQ sauce;BBQ;Barbeque sauce
+!jalapenos|Jalapeños|Jalapeno;Jalapenos
+!peppers|Peppers|Green peppers;Bell peppers
 !guacamole|Guacamole|Guac
-!miracle-whip|Miracle Whip
-!horseradish|Horseradish
-!pesto|Pesto
-!hummus|Hummus
-!aioli|Aioli
-!gravy|Gravy
-!vinegar|Vinegar
-!queso|Queso|Cheese sauce
-!nutella|Nutella
-!wasabi|Wasabi
-!pickles|Pickles
-!blue-cheese|Blue cheese dressing|Blue cheese
-!buffalo|Buffalo sauce
-!sweet-sour|Sweet and sour sauce|Sweet and sour
-!marinara|Marinara|Pasta sauce
-!butter|Butter
-!salt|Salt
-!pepper|Pepper
-!olive-oil|Olive oil
+!chili|Chili
+!coleslaw|Coleslaw|Slaw
+!pineapple|Pineapple
+!steak-sauce|Steak sauce|A1;A.1.
+!special-sauce|Special sauce|Secret sauce;Burger sauce
+!onion-rings|Onion rings
+!salsa|Salsa
+!peanut-butter|Peanut butter
+!sauerkraut|Sauerkraut
+!ham|Ham
 `,
 };
 
@@ -1182,14 +1167,14 @@ const QUESTIONS = [
     answers: [["smith","#1"],["johnson","#2"],["williams","#3"],["brown","#4"],["jones","#5"]],
     near: [["garcia","#6",""],["miller","#7",""],["rodriguez","#8",""],["davis","#9",""],["martinez","#10",""]],
     notes: {} },
-  { id: "condiments", level: "Hard", title: "Condiments Americans keep at home",
-    prompt: "The 5 condiments the most Americans have at home",
-    rule: "From YouGov's list of 22 condiments: the share of US adults who said they have each one at home right now.",
-    source: "Source: YouGov condiments poll, Jan 30 – Feb 1, 2026", pool: "condiments",
-    offListMsg: (name) => `${name} wasn't one of the 22 condiments in the poll. No strike.`,
-    answers: [["ketchup","84%"],["peanut-butter","83%"],["mayo","77%"],["mustard","75%"],["jam","74%"]],
-    near: [["honey","#6","71%"],["bbq","#7","65%"],["ranch","#8","60%"],["maple","#9","59%"],["hot-sauce","#10","58%"]],
-    notes: { salsa: "Salsa is #12. Only half of Americans have it at home." } },
+  { id: "burger-toppings", level: "Medium", title: "Most popular burger toppings",
+    prompt: "The 5 toppings Americans most often put on their burgers",
+    rule: "From YouGov's list of 17 toppings and sauces: the share of US adults who say they typically put each one on a burger.",
+    source: "Source: YouGov poll of 9,394 US adults, May 27, 2021", pool: "burger",
+    offListMsg: (name) => `${name} wasn't one of the 17 choices in the poll. No strike.`,
+    answers: [["cheese","67%"],["lettuce","62%"],["tomatoes","58%"],["ketchup","58%"],["onions","53%"]],
+    near: [["pickles","#6","48%"],["mustard","#7","44%"],["bacon","#8 (tie)","38%"],["mayo","#8 (tie)","38%"],["mushrooms","#10","20%"]],
+    notes: {} },
   { id: "crust", level: "Hard", title: "Elements in Earth's crust",
     prompt: "The 5 most abundant elements in Earth's crust",
     rule: "Share of the crust by mass. Element names or symbols both work.",
