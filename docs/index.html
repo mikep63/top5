@@ -1009,7 +1009,7 @@ incredibles-2|Incredibles 2
 lion-king-2019|The Lion King (2019)
 lion-king-1994|The Lion King (1994)
 dark-knight|The Dark Knight|Dark Knight
-star-wars-1977|Star Wars (1977)|A New Hope;Star Wars Episode IV;Episode IV
+star-wars-1977|Star Wars (1977)|Star Wars;A New Hope;Star Wars Episode IV;Episode IV
 last-jedi|Star Wars: The Last Jedi|The Last Jedi;Last Jedi;Episode VIII
 rise-skywalker|Star Wars: The Rise of Skywalker|The Rise of Skywalker;Rise of Skywalker;Episode IX
 phantom-menace|The Phantom Menace|Phantom Menace;Episode I
@@ -1039,6 +1039,30 @@ beauty-beast|Beauty and the Beast (2017)
 wicked|Wicked
 oppenheimer|Oppenheimer
 gone-wind|Gone with the Wind
+sound-of-music|The Sound of Music|Sound of Music
+ten-commandments|The Ten Commandments|Ten Commandments
+zhivago|Doctor Zhivago|Dr. Zhivago;Zhivago
+exorcist|The Exorcist|Exorcist
+snow-white|Snow White and the Seven Dwarfs|Snow White
+snow-white-2025|Snow White (2025)
+dalmatians|101 Dalmatians|One Hundred and One Dalmatians
+empire|The Empire Strikes Back|Empire Strikes Back;Episode V
+jedi|Return of the Jedi|Episode VI
+ben-hur|Ben-Hur|Ben Hur
+godfather|The Godfather|Godfather
+close-encounters|Close Encounters of the Third Kind|Close Encounters
+sting|The Sting
+grease|Grease
+mary-poppins|Mary Poppins
+bambi|Bambi
+fantasia|Fantasia
+raiders|Raiders of the Lost Ark|Indiana Jones;Raiders
+forrest-gump|Forrest Gump
+home-alone|Home Alone
+ghostbusters|Ghostbusters
+batman-1989|Batman (1989)
+wizard-of-oz|The Wizard of Oz|Wizard of Oz
+casablanca|Casablanca
 `,
   burger: `
 cheese|Cheese|American cheese;Cheddar;Swiss cheese;Cheeseburger
@@ -1145,13 +1169,6 @@ const QUESTIONS = [
     answers: [["bonds","762 HR"],["aaron","755"],["ruth","714"],["pujols","703"],["arod","696"]],
     near: [["mays","#6","660"],["griffey","#7","630"],["thome","#8","612"],["sosa","#9","609"],["frobinson","#10","586"]],
     notes: {} },
-  { id: "films", level: "Medium", title: "Highest-grossing films",
-    prompt: "The 5 highest-grossing films at the US box office",
-    rule: "Lifetime US and Canada ticket sales, including re-releases. Not adjusted for inflation.",
-    source: "Source: Box Office Mojo, as of October 2026", pool: "films", freeform: true,
-    answers: [["bnd","$955.4M"],["tfa","$936.7M"],["endgame","$896.1M"],["nwh","$814.9M"],["avatar","$785.2M"]],
-    near: [["maverick","#6","$722.0M"],["black-panther","#7","$700.4M"],["way-of-water","#8","$688.5M"],["infinity-war","#9","$678.8M"],["titanic","#10","$674.4M"]],
-    notes: { titanic: "Titanic is #10 in the US, though it's #6 worldwide." } },
   { id: "states-small", level: "Hard", title: "Smallest US states",
     prompt: "The 5 smallest US states by total area",
     rule: "Total area, land plus water.",
@@ -1160,6 +1177,13 @@ const QUESTIONS = [
     near: [["vt","#6","9,616 sq mi"],["ma","#7","10,554 sq mi"],["hi","#8","10,932 sq mi"],["md","#9","12,406 sq mi"],["wv","#10","24,230 sq mi"]],
     notes: { hi: "Hawaii is #8 by total area. By land area alone it would be #4.",
              vt: "Vermont is #6, missing the top 5 by just 267 square miles." } },
+  { id: "films-adjusted", level: "Hard", title: "Biggest box office hits",
+    prompt: "The 5 biggest movies of all time at the US box office, adjusted for inflation",
+    rule: "Lifetime US and Canada ticket sales, adjusted to today's ticket prices.",
+    source: "Source: Filmsite.org inflation-adjusted box office, 2025", pool: "films", freeform: true,
+    answers: [["gone-wind","1939"],["star-wars-1977","1977"],["sound-of-music","1965"],["et","1982"],["titanic","1997"]],
+    near: [["ten-commandments","#6","1956"],["jaws","#7","1975"],["zhivago","#8","1965"],["exorcist","#9","1973"],["snow-white","#10","1937"]],
+    notes: { tfa: "The Force Awakens is #11 after adjusting for inflation.", avatar: "Avatar is #15 after adjusting for inflation." } },
   { id: "surnames", level: "Hard", title: "Most common US last names",
     prompt: "The 5 most common last names in the US",
     rule: "Last names reported in the 2020 Census.",
