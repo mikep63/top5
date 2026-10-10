@@ -1040,6 +1040,54 @@ wicked|Wicked
 oppenheimer|Oppenheimer
 gone-wind|Gone with the Wind
 `,
+  condiments: `
+ketchup|Ketchup|Catsup
+peanut-butter|Peanut butter|PB
+mayo|Mayonnaise|Mayo
+mustard|Mustard|Yellow mustard;Dijon;Dijon mustard
+jam|Jam or jelly|Jam;Jelly;Grape jelly;Preserves
+honey|Honey
+bbq|Barbecue sauce|BBQ sauce;BBQ;Barbeque sauce
+ranch|Ranch dressing|Ranch
+maple|Maple syrup|Syrup;Pancake syrup
+hot-sauce|Hot sauce|Sriracha;Tabasco;Frank's RedHot;Cholula
+soy|Soy sauce|Soy
+salsa|Salsa
+italian|Italian dressing|Italian
+steak-sauce|Steak sauce|A1;A.1.
+relish|Relish|Pickle relish
+teriyaki|Teriyaki sauce|Teriyaki
+chocolate|Chocolate sauce|Chocolate syrup;Hershey's syrup
+honey-mustard|Honey mustard
+caesar|Caesar dressing|Caesar
+thousand-island|Thousand Island dressing|Thousand Island;1000 Island
+fish-sauce|Fish sauce
+hoisin|Hoisin sauce|Hoisin
+!tartar|Tartar sauce|Tartar
+!worcestershire|Worcestershire sauce|Worcestershire
+!cocktail|Cocktail sauce
+!sour-cream|Sour cream
+!guacamole|Guacamole|Guac
+!miracle-whip|Miracle Whip
+!horseradish|Horseradish
+!pesto|Pesto
+!hummus|Hummus
+!aioli|Aioli
+!gravy|Gravy
+!vinegar|Vinegar
+!queso|Queso|Cheese sauce
+!nutella|Nutella
+!wasabi|Wasabi
+!pickles|Pickles
+!blue-cheese|Blue cheese dressing|Blue cheese
+!buffalo|Buffalo sauce
+!sweet-sour|Sweet and sour sauce|Sweet and sour
+!marinara|Marinara|Pasta sauce
+!butter|Butter
+!salt|Salt
+!pepper|Pepper
+!olive-oil|Olive oil
+`,
 };
 
 // Notes shown when an out-of-scope ("!") entry is guessed. No strike.
@@ -1134,6 +1182,14 @@ const QUESTIONS = [
     answers: [["smith","#1"],["johnson","#2"],["williams","#3"],["brown","#4"],["jones","#5"]],
     near: [["garcia","#6",""],["miller","#7",""],["rodriguez","#8",""],["davis","#9",""],["martinez","#10",""]],
     notes: {} },
+  { id: "condiments", level: "Hard", title: "Condiments Americans keep at home",
+    prompt: "The 5 condiments the most Americans have at home",
+    rule: "From YouGov's list of 22 condiments: the share of US adults who said they have each one at home right now.",
+    source: "Source: YouGov condiments poll, Jan 30 – Feb 1, 2026", pool: "condiments",
+    offListMsg: (name) => `${name} wasn't one of the 22 condiments in the poll. No strike.`,
+    answers: [["ketchup","84%"],["peanut-butter","83%"],["mayo","77%"],["mustard","75%"],["jam","74%"]],
+    near: [["honey","#6","71%"],["bbq","#7","65%"],["ranch","#8","60%"],["maple","#9","59%"],["hot-sauce","#10","58%"]],
+    notes: { salsa: "Salsa is #12. Only half of Americans have it at home." } },
   { id: "crust", level: "Hard", title: "Elements in Earth's crust",
     prompt: "The 5 most abundant elements in Earth's crust",
     rule: "Share of the crust by mass. Element names or symbols both work.",
@@ -1248,7 +1304,8 @@ function scoreOf(r) {
 // Returns { tone: "good"|"bad"|"info", text } describing what happened.
 function guessEntry(r, entry) {
   if (r.over) return { tone: "info", text: "This round is over." };
-  if (entry.outOfScope) return { tone: "info", text: OUT_OF_SCOPE[entry.id] || `${entry.name} doesn't count here. No strike.` };
+  if (entry.outOfScope) return { tone: "info", text: OUT_OF_SCOPE[entry.id]
+    || (r.q.offListMsg ? r.q.offListMsg(entry.name) : `${entry.name} doesn't count here. No strike.`) };
   if (r.guessed.has(entry.id)) return { tone: "info", text: `You already guessed ${entry.name}. No strike.` };
   r.guessed.add(entry.id);
 
