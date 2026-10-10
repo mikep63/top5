@@ -984,6 +984,62 @@ panthers|Carolina Panthers|Panthers;Carolina
 bucs|Tampa Bay Buccaneers|Buccaneers;Bucs;Tampa Bay;Tampa
 bills|Buffalo Bills|Bills;Buffalo
 `,
+  films: `
+bnd|Spider-Man: Brand New Day|Brand New Day;Spiderman Brand New Day;Spider-Man 4
+tfa|Star Wars: The Force Awakens|The Force Awakens;Force Awakens;Star Wars Episode VII;Star Wars 7;Episode VII
+endgame|Avengers: Endgame|Endgame
+nwh|Spider-Man: No Way Home|No Way Home;Spiderman No Way Home
+avatar|Avatar
+maverick|Top Gun: Maverick|Maverick;Top Gun 2
+black-panther|Black Panther
+way-of-water|Avatar: The Way of Water|The Way of Water;Way of Water;Avatar 2
+infinity-war|Avengers: Infinity War|Infinity War
+titanic|Titanic
+jurassic-world|Jurassic World
+inside-out-2|Inside Out 2
+deadpool-wolverine|Deadpool & Wolverine|Deadpool 3
+barbie|Barbie
+avengers|The Avengers (2012)|Avengers 2012
+ultron|Avengers: Age of Ultron|Age of Ultron
+odyssey|The Odyssey|Odyssey
+zootopia-2|Zootopia 2
+ne-zha-2|Ne Zha 2|Nezha 2
+fire-and-ash|Avatar: Fire and Ash|Fire and Ash;Avatar 3
+incredibles-2|Incredibles 2
+lion-king-2019|The Lion King (2019)
+lion-king-1994|The Lion King (1994)
+dark-knight|The Dark Knight|Dark Knight
+star-wars-1977|Star Wars (1977)|A New Hope;Star Wars Episode IV;Episode IV
+last-jedi|Star Wars: The Last Jedi|The Last Jedi;Last Jedi;Episode VIII
+rise-skywalker|Star Wars: The Rise of Skywalker|The Rise of Skywalker;Rise of Skywalker;Episode IX
+phantom-menace|The Phantom Menace|Phantom Menace;Episode I
+rogue-one|Rogue One|Rogue One: A Star Wars Story
+et|E.T. the Extra-Terrestrial|E.T.;ET
+jaws|Jaws
+jurassic-park|Jurassic Park
+fallen-kingdom|Jurassic World: Fallen Kingdom|Fallen Kingdom
+dominion|Jurassic World Dominion|Dominion
+frozen|Frozen
+frozen-2|Frozen II|Frozen 2
+moana-2|Moana 2
+mario|The Super Mario Bros. Movie|Super Mario Bros
+mario-galaxy|The Super Mario Galaxy Movie|Super Mario Galaxy;Mario Galaxy
+furious-7|Furious 7|Fast and Furious 7;Fast 7
+far-from-home|Spider-Man: Far From Home|Far From Home;Spiderman Far From Home
+spider-man-2002|Spider-Man (2002)|Spiderman 2002
+deathly-hallows-2|Harry Potter and the Deathly Hallows – Part 2|Deathly Hallows Part 2;Deathly Hallows
+sorcerers-stone|Harry Potter and the Sorcerer's Stone|Sorcerer's Stone;Philosopher's Stone
+return-king|The Lord of the Rings: The Return of the King|Return of the King
+dead-mans-chest|Pirates of the Caribbean: Dead Man's Chest|Dead Man's Chest
+shrek-2|Shrek 2
+toy-story-3|Toy Story 3
+toy-story-4|Toy Story 4
+top-gun|Top Gun (1986)
+beauty-beast|Beauty and the Beast (2017)
+wicked|Wicked
+oppenheimer|Oppenheimer
+gone-wind|Gone with the Wind
+`,
 };
 
 // Notes shown when an out-of-scope ("!") entry is guessed. No strike.
@@ -1056,6 +1112,13 @@ const QUESTIONS = [
     answers: [["bonds","762 HR"],["aaron","755"],["ruth","714"],["pujols","703"],["arod","696"]],
     near: [["mays","#6","660"],["griffey","#7","630"],["thome","#8","612"],["sosa","#9","609"],["frobinson","#10","586"]],
     notes: {} },
+  { id: "films", level: "Medium", title: "Highest-grossing films",
+    prompt: "The 5 highest-grossing films at the US box office",
+    rule: "Lifetime US and Canada ticket sales, including re-releases. Not adjusted for inflation.",
+    source: "Source: Box Office Mojo, as of October 2026", pool: "films", freeform: true,
+    answers: [["bnd","$955.4M"],["tfa","$936.7M"],["endgame","$896.1M"],["nwh","$814.9M"],["avatar","$785.2M"]],
+    near: [["maverick","#6","$722.0M"],["black-panther","#7","$700.4M"],["way-of-water","#8","$688.5M"],["infinity-war","#9","$678.8M"],["titanic","#10","$674.4M"]],
+    notes: { titanic: "Titanic is #10 in the US, though it's #6 worldwide." } },
   { id: "states-small", level: "Hard", title: "Smallest US states",
     prompt: "The 5 smallest US states by total area",
     rule: "Total area, land plus water.",
