@@ -998,6 +998,7 @@ const OUT_OF_SCOPE = {
 };
 
 // answers: [id, revealed value]. near: [id, label, value] for ranks 6-10.
+// notes show mid-round on a miss, so they must never name or point to an answer.
 const QUESTIONS = [
   { id: "countries-area", level: "Easy", title: "Largest countries by area",
     prompt: "The 5 largest countries in the world by total area",
@@ -1012,7 +1013,7 @@ const QUESTIONS = [
     source: "Source: US Census Bureau, 2020 Census", pool: "states",
     answers: [["ca","39.5M"],["tx","29.1M"],["fl","21.5M"],["ny","20.2M"],["pa","13.0M"]],
     near: [["il","#6","12.8M"],["oh","#7","11.8M"],["ga","#8","10.7M"],["nc","#9","10.4M"],["mi","#10","10.1M"]],
-    notes: { il: "Illinois is #6, about 190,000 people behind Pennsylvania." } },
+    notes: { il: "Illinois is #6, missing the top 5 by about 190,000 people." } },
   { id: "countries-pop", level: "Easy", title: "Most populous countries",
     prompt: "The 5 most populous countries in the world",
     rule: "Population in 2024. Countries only, not territories.",
@@ -1040,7 +1041,7 @@ const QUESTIONS = [
     source: "Source: US Census Bureau, 2020 Census", pool: "cities",
     answers: [["nyc","8,804,190"],["la","3,898,747"],["chicago","2,746,388"],["houston","2,304,580"],["phoenix","1,608,139"]],
     near: [["philadelphia","#6","1,603,797"],["san-antonio","#7","1,434,625"],["san-diego","#8","1,386,932"],["dallas","#9","1,304,379"],["san-jose","#10","1,013,240"]],
-    notes: { philadelphia: "Philadelphia is #6, just 4,342 people behind #5." } },
+    notes: { philadelphia: "Philadelphia is #6, missing the top 5 by just 4,342 people." } },
   { id: "dogs", level: "Medium", title: "Most popular dog breeds",
     prompt: "The 5 most popular dog breeds in the US",
     rule: "Ranked by AKC registrations in 2024. All sizes of Poodle count as one breed.",
@@ -1062,7 +1063,7 @@ const QUESTIONS = [
     answers: [["ri","1,545 sq mi"],["de","2,489 sq mi"],["ct","5,543 sq mi"],["nj","8,723 sq mi"],["nh","9,349 sq mi"]],
     near: [["vt","#6","9,616 sq mi"],["ma","#7","10,554 sq mi"],["hi","#8","10,932 sq mi"],["md","#9","12,406 sq mi"],["wv","#10","24,230 sq mi"]],
     notes: { hi: "Hawaii is #8 by total area. By land area alone it would be #4.",
-             vt: "Vermont is #6, only 267 square miles bigger than New Hampshire." } },
+             vt: "Vermont is #6, missing the top 5 by just 267 square miles." } },
   { id: "surnames", level: "Hard", title: "Most common US last names",
     prompt: "The 5 most common last names in the US",
     rule: "Last names reported in the 2020 Census.",
@@ -1086,7 +1087,7 @@ const QUESTIONS = [
     nearShow: (label) => `SB ${label}`,
     answers: [["chiefs","Lost to Green Bay, 35–10"],["raiders","Lost to Green Bay, 33–14"],["colts","Lost to the Jets, 16–7"],["vikings","Lost to Kansas City, 23–7"],["cowboys","Lost to Baltimore, 16–13"]],
     near: [["dolphins","VI","Lost to Dallas, 24–3"],["washington","VII","Lost to Miami, 14–7"],["broncos","XII","Lost to Dallas, 27–10"],["rams","XIV","Lost to Pittsburgh, 31–19"],["eagles","XV","Lost to Oakland, 27–10"]],
-    notes: { packers: "Green Bay won Super Bowls I and II.", jets: "The Jets won Super Bowl III." } },
+    notes: { packers: "Green Bay didn't lose any of the first five Super Bowls.", jets: "The Jets didn't lose any of the first five Super Bowls." } },
 ];
 
 // ----- Matching (ported from Top5Core's Normalizer and Matcher) -----
